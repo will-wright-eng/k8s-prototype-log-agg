@@ -1,0 +1,102 @@
+role: Agent
+# Workload identity
+serviceAccount:
+  create: false
+  name: vector-sa
+# Replicas for high availability
+replicas: 2
+# Resources
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 1
+    memory: 2Gi
+# Vector configuration
+customConfig:
+  data_dir: /vector-data-dir
+  api:
+    enabled: true
+    address: 0.0.0.0:8686
+  # Sources
+  sources:
+    # HTTP source for Next.js and Databricks logs
+    http_receiver:
+      type: http
+      address: 0.0.0.0:8080
+      decoding:
+        codec: json
+    # Pub/Sub source for GCP logs
+    pubsub_logs:
+      type: gcp_pubsub
+      project_id: ${PROJECT_ID}
+      subscription_id: vector-logs-subscription
+      decoding:
+        codec: json
+  # Transforms for processing logs
+  transforms:
+    # Add source type for HTTP logs
+    tag_nextjs_logs:
+      type: filter
+      inputs: ["http_receiver"]
+      condition: '.app_name == "nextjs"'
+    # Parse and structure Next.js logs
+    parse_nextjs:
+      type: remap
+      inputs: ["tag_nextjs_logs"]
+      source: |
+        # Add standard fields
+        .source = "nextjs"
+        .environment = .environment || "development"
+        # Add timestamp if not present
+        if !exists(.timestamp) {
+          .timestamp = now()
+        }
+    # Add source type for Databricks logs
+    tag_databricks_logs:
+      type: filter
+      inputs: ["http_receiver"]
+      condition: '.source == "databricks"'
+    # Parse Databricks logs
+    parse_databricks:
+      type: remap
+      inputs: ["tag_databricks_logs"]
+      source: |
+        # Standard processing
+        .environment = .environment || "development"
+        # Add timestamp if not present
+        if !exists(.timestamp) {
+          .timestamp = now()
+        }
+    # Parse GCP logs from Pub/Sub
+    parse_gcp_logs:
+      type: remap
+      inputs: ["pubsub_logs"]
+      source: |
+        # Extract relevant fields
+        .source = "gcp"
+        # Handle nested structures in GCP logs
+        if exists(.resource) {
+          .resource_type = .resource.type
+        }
+        # Extract severity
+        if exists(.severity) {
+          .level = .severity
+        }
+  # Sinks for sending logs to destinations
+  sinks:
+    # Loki sink for all logs
+    loki:
+      type: loki
+      inputs: ["parse_nextjs", "parse_databricks", "parse_gcp_logs"]
+      endpoint: http://loki:3100
+      encoding:
+        codec: json
+      batch:
+        max_bytes: 1048576 # 1MB
+      labels:
+        source: "{{ source }}"
+        environment: "{{ environment }}"
+        level: "{{ level }}"
+        app: "{{ app_name }}"

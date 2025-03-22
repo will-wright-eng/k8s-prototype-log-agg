@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: logging-vector
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://helm.vector.dev
+    targetRevision: 0.25.x
+    chart: vector
+    helm:
+      valueFiles:
+      - $values/helm-values/vector/values-dev.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: logging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

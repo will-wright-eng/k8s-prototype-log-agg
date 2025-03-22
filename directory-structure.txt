@@ -1,0 +1,27 @@
+loki-log-aggregation/
+├── Makefile                       # Main Makefile for setup and deployment
+├── README.md                      # Project documentation
+├── scripts/
+│   ├── setup-gcp.sh               # Script to set up GCP resources
+│   └── install-argocd.sh          # Script to install ArgoCD
+├── helm-values/
+│   ├── loki/
+│   │   └── values-dev.yaml        # Custom values for Loki
+│   ├── grafana/
+│   │   └── values-dev.yaml        # Custom values for Grafana
+│   ├── vector/
+│   │   └── values-dev.yaml        # Custom values for Vector
+│   └── redis/
+│       └── values-dev.yaml        # Custom values for Redis
+└── k8s/
+    ├── custom-resources/
+    │   ├── namespace.yaml         # Namespace definition
+    │   ├── storage-class.yaml     # GCP storage class
+    │   ├── workload-identity.yaml # Workload identity bindings
+    │   └── ingress.yaml           # GCP-specific ingress
+    └── argocd/
+        ├── root-application.yaml  # Root ArgoCD application
+        ├── loki-application.yaml  # Loki ArgoCD application
+        ├── grafana-application.yaml # Grafana ArgoCD application
+        ├── vector-application.yaml # Vector ArgoCD application
+        └── redis-application.yaml # Redis ArgoCD application

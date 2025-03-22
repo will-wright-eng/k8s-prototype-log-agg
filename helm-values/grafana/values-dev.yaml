@@ -1,0 +1,74 @@
+replicas: 1
+# Resources
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 1
+    memory: 2Gi
+# Enable persistence
+persistence:
+  enabled: true
+  storageClassName: loki-storage
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+# Basic security
+adminPassword: admin  # Should use a secret in production
+# Default datasources
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - name: Loki
+      type: loki
+      url: http://loki:3100
+      access: proxy
+      isDefault: true
+      version: 1
+# Dashboards
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+    - name: 'default'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards/default
+dashboards:
+  default:
+    loki-logs:
+      gnetId: 13639
+      revision: 1
+      datasource: Loki
+    vector-metrics:
+      gnetId: 14851
+      revision: 1
+      datasource: Loki
+# Enable relevant plugins
+plugins:
+  - grafana-piechart-panel
+  - grafana-worldmap-panel
+  - grafana-clock-panel
+# Basic configuration
+grafana.ini:
+  paths:
+    data: /var/lib/grafana
+    logs: /var/log/grafana
+    plugins: /var/lib/grafana/plugins
+  server:
+    root_url: https://grafana.example.com
+  auth:
+    disable_login_form: false
+  analytics:
+    reporting_enabled: false
+    check_for_updates: true

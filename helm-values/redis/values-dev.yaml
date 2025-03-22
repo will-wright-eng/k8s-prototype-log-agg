@@ -1,0 +1,36 @@
+# Redis Helm configuration for Loki
+architecture: standalone
+# Authentication
+auth:
+  enabled: true
+  existingSecret: ""
+  existingSecretPasswordKey: ""
+  password: "loki-redis-password"  # Change to a secure password in production
+# Persistence
+master:
+  persistence:
+    enabled: true
+    storageClass: "loki-storage"
+    size: 20Gi
+# Resources
+master:
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1
+      memory: 2Gi
+# Network
+service:
+  type: ClusterIP
+# Redis configuration
+commonConfiguration: |-
+  # Enable AOF https://redis.io/topics/persistence#append-only-file
+  appendonly yes
+  # Disable RDB persistence
+  save ""
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: false

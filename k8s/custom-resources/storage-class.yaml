@@ -1,0 +1,13 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: loki-storage
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: pd.csi.storage.gke.io
+parameters:
+  type: pd-ssd
+  fstype: ext4
+  replication-type: none
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
