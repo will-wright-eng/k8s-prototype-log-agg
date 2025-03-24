@@ -10,5 +10,10 @@ terraform {
       version = ">= 2.10.0"
     }
   }
+  backend "gcs" {
+    bucket = "integral-dev-terraform-state"
+    prefix = "terraform/k8s-prototype-log-agg/state"
+  }
 }
+
 data "google_client_config" "default" {}
