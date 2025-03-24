@@ -77,12 +77,14 @@ resource "google_storage_bucket" "loki_bucket" {
 resource "google_service_account" "loki_sa" {
   account_id   = "loki-sa"
   display_name = "Loki Service Account"
+  project      = var.project_id
   depends_on   = [google_project_service.services["iam.googleapis.com"]]
 }
 
 resource "google_service_account" "vector_sa" {
   account_id   = "vector-sa"
   display_name = "Vector Service Account"
+  project      = var.project_id
   depends_on   = [google_project_service.services["iam.googleapis.com"]]
 }
 
@@ -122,6 +124,7 @@ resource "google_service_account_iam_binding" "loki_workload_identity" {
   members = [
     "serviceAccount:${var.project_id}.svc.id.goog[logging/loki-sa]"
   ]
+  depends_on = [module.gke]
 }
 
 resource "google_service_account_iam_binding" "vector_workload_identity" {
@@ -130,6 +133,20 @@ resource "google_service_account_iam_binding" "vector_workload_identity" {
   members = [
     "serviceAccount:${var.project_id}.svc.id.goog[logging/vector-sa]"
   ]
+  depends_on = [module.gke]
+}
+
+# Add specific IAM roles for the service accounts
+resource "google_project_iam_member" "loki_storage_viewer" {
+  project = var.project_id
+  role    = "roles/storage.objectViewer"
+  member  = "serviceAccount:${google_service_account.loki_sa.email}"
+}
+
+resource "google_project_iam_member" "vector_pubsub_subscriber" {
+  project = var.project_id
+  role    = "roles/pubsub.subscriber"
+  member  = "serviceAccount:${google_service_account.vector_sa.email}"
 }
 
 # Add a service account for GKE nodes

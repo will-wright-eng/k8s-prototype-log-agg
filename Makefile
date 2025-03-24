@@ -23,27 +23,15 @@ init: ## [tf] Initialize Terraform
 
 plan: ## [tf] Plan tofu changes
 	@echo "Planning tofu changes..."
-	cd $(TERRAFORM_DIR) && tofu plan \
-		-var="project_id=$(PROJECT_ID)" \
-		-var="region=$(REGION)" \
-		-var="zone=$(ZONE)" \
-		-var="cluster_name=$(CLUSTER_NAME)"
+	cd $(TERRAFORM_DIR) && tofu plan
 
 apply: ## [tf] Apply tofu changes
 	@echo "Applying tofu changes..."
-	cd $(TERRAFORM_DIR) && tofu apply -auto-approve \
-		-var="project_id=$(PROJECT_ID)" \
-		-var="region=$(REGION)" \
-		-var="zone=$(ZONE)" \
-		-var="cluster_name=$(CLUSTER_NAME)"
+	cd $(TERRAFORM_DIR) && tofu apply -auto-approve
 
 destroy: ## [tf] Destroy tofu resources
 	@echo "Destroying tofu resources..."
-	cd $(TERRAFORM_DIR) && tofu destroy \
-		-var="project_id=$(PROJECT_ID)" \
-		-var="region=$(REGION)" \
-		-var="zone=$(ZONE)" \
-		-var="cluster_name=$(CLUSTER_NAME)"
+	cd $(TERRAFORM_DIR) && tofu destroy
 
 get-credentials: ## [gcloud] Get cluster credentials (after tofu apply)
 	@echo "Getting cluster credentials..."
