@@ -41,5 +41,5 @@ output "pubsub_subscription" {
 
 output "kubectl_connect_command" {
   description = "Command to connect kubectl to the cluster"
-  value       = "gcloud container clusters get-credentials ${module.gke.name} --zone ${var.zone} --project ${var.project_id}"
+  value       = "gcloud container clusters get-credentials ${module.gke.cluster_name} --zone ${var.zone} --project ${var.project_id}"
 }

@@ -4,9 +4,9 @@ resource "google_container_cluster" "cluster" {
   location                 = var.region
   project                  = var.project_id
   network                  = var.network_name
-  subnetwork              = var.subnet_name
+  subnetwork               = var.subnet_name
   remove_default_node_pool = true
-  initial_node_count      = 1
+  initial_node_count       = 1
 
   # Configure networking
   ip_allocation_policy {

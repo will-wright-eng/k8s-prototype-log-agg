@@ -14,8 +14,8 @@ resource "google_project_service" "services" {
     "monitoring.googleapis.com",    # Cloud Monitoring
     "logging.googleapis.com"        # Cloud Logging
   ])
-  project = var.project_id
-  service = each.key
+  project                    = var.project_id
+  service                    = each.key
   disable_dependent_services = false
   disable_on_destroy         = false
 }
@@ -45,23 +45,23 @@ resource "google_compute_subnetwork" "subnet" {
 module "gke" {
   source = "./modules/gke"
 
-  project_id          = var.project_id
-  cluster_name        = var.cluster_name
-  region             = var.region
-  network_name       = google_compute_network.network.name
-  subnet_name        = google_compute_subnetwork.subnet.name
-  pods_range_name    = "${var.subnet_name}-pods"
-  services_range_name = "${var.subnet_name}-services"
-  node_pool_name     = "default-node-pool"
-  machine_type       = var.machine_type
-  node_count         = var.node_count
+  project_id           = var.project_id
+  cluster_name         = var.cluster_name
+  region               = var.region
+  network_name         = google_compute_network.network.name
+  subnet_name          = google_compute_subnetwork.subnet.name
+  pods_range_name      = "${var.subnet_name}-pods"
+  services_range_name  = "${var.subnet_name}-services"
+  node_pool_name       = "default-node-pool"
+  machine_type         = var.machine_type
+  node_count           = var.node_count
   node_service_account = google_service_account.gke_sa.email
 }
 
 resource "google_storage_bucket" "loki_bucket" {
-  name          = local.bucket_name
-  location      = var.region
-  force_destroy = true
+  name                        = local.bucket_name
+  location                    = var.region
+  force_destroy               = true
   uniform_bucket_level_access = true
   lifecycle_rule {
     condition {
@@ -95,7 +95,7 @@ resource "google_storage_bucket_iam_binding" "loki_storage_binding" {
 }
 
 resource "google_pubsub_topic" "gcp_logs" {
-  name = "gcp-logs"
+  name       = "gcp-logs"
   depends_on = [google_project_service.services["pubsub.googleapis.com"]]
 }
 

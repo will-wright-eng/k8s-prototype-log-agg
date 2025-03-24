@@ -1,0 +1,43 @@
+branch: main
+download-external-modules: true
+evaluate-variables: true
+external-modules-download-path: .external_modules
+framework:
+  - terraform
+skip-check:
+  # Cloud SQL related checks
+  - CKV_GCP_6    # Skip SSL requirement check for Cloud SQL
+  - CKV_GCP_79   # Skip latest major version check
+  - CKV2_GCP_20  # Skip point-in-time recovery backup check
+  - CKV_GCP_62   # Skip Cloud SQL database flag requirements
+
+  # Cloud SQL database flag requirements
+  - CKV2_GCP_13  # Ensure PostgreSQL database flag 'log_duration' is set to 'on'
+  - CKV_GCP_51   # Skip Cloud SQL database flag requirements
+  - CKV_GCP_52   # Skip Cloud SQL database flag requirements
+  - CKV_GCP_53   # Skip Cloud SQL database flag requirements
+  - CKV_GCP_54   # Skip Cloud SQL database flag requirements
+  - CKV_GCP_60   # Ensure Cloud SQL database does not have public IP
+  - CKV_GCP_108  # Skip Cloud SQL database flag requirements
+  - CKV_GCP_109  # Skip Cloud SQL database flag requirements
+  - CKV_GCP_110  # Skip Cloud SQL database flag requirements
+  - CKV_GCP_111  # Skip Cloud SQL database flag requirements
+
+  # VPC and Security related checks
+  - CKV_GIT_4    # Ensure GitHub Actions secrets are encrypted
+  - CKV_GCP_19   # Skip VPC flow logs requirement
+  - CKV_GCP_49   # Skip key rotation period requirements
+  - CKV_GCP_125  # Ensure GCP GitHub Actions OIDC trust policy is configured securely
+
+  # Miscellaneous checks
+  - CKV2_GCP_5   # Skip web socket requirement checks
+  - CKV_TF_1     # Skip Terraform provider version pinning
+skip-path:
+  - .external_modules/.*
+  - .terraform/.*
+quiet: false
+compact: false
+output:
+  - cli
+  - json
+summary-position: top

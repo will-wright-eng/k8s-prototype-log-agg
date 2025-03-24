@@ -111,18 +111,23 @@ The system architecture consists of several components that collect, process, st
 ### Accessing Dashboards
 
 1. **Grafana**:
+
    ```
    make grafana-port-forward
    ```
-   Then access: http://localhost:3000 (admin/admin)
+
+   Then access: <http://localhost:3000> (admin/admin)
 
 2. **ArgoCD**:
+
    ```
    make argocd-port-forward
    ```
-   Then access: https://localhost:8080
-   
+
+   Then access: <https://localhost:8080>
+
    Get the admin password:
+
    ```
    kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
    ```
@@ -181,7 +186,7 @@ import json
 def send_log_to_vector(log_message, log_level="INFO", metadata=None):
     if metadata is None:
         metadata = {}
-    
+
     log_data = {
         "source": "databricks",
         "environment": "production",
@@ -190,7 +195,7 @@ def send_log_to_vector(log_message, log_level="INFO", metadata=None):
         "timestamp": datetime.now().isoformat(),
         **metadata
     }
-    
+
     try:
         response = requests.post(
             "https://vector.example.com/api/logs",
@@ -226,6 +231,7 @@ Edit the `helm-values/loki/values-dev.yaml` file and update the `limits_config.r
 ## Monitoring the System
 
 Access Grafana and use the pre-configured dashboards:
+
 - "Loki Logs" dashboard for viewing logs
 - "Vector Metrics" dashboard for monitoring the log pipeline
 
@@ -287,7 +293,7 @@ kubectl logs -n logging deployment/grafana
 
 ### Common Issues
 
-1. **Workload Identity Issues**: 
+1. **Workload Identity Issues**:
    - Check if service accounts are properly configured
    - Verify IAM bindings are correct
 

@@ -1,0 +1,91 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+default_language_version:
+  python: python3.12
+
+default_stages: [pre-commit, pre-push]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-executables-have-shebangs
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-toml
+      # - id: check-yaml
+      - id: end-of-file-fixer
+      - id: pretty-format-json
+        args: [--autofix, --no-ensure-ascii, --no-sort-keys]
+      - id: requirements-txt-fixer
+      - id: trailing-whitespace
+      - id: check-added-large-files
+      - id: check-ast
+      - id: check-byte-order-marker
+      - id: detect-private-key
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.97.4
+    hooks:
+      - id: terraform_fmt
+        args:
+          - --args=-recursive
+          - --args=-diff
+          - --args=-write=true
+        entry: /usr/bin/env bash -c 'tofu fmt -recursive -diff -write=true || true'
+      - id: terraform_validate
+        args:
+          - --args=-json
+          - --args=-no-color
+        entry: /usr/bin/env bash -c 'tofu validate -json -no-color || true'
+      - id: terraform_tflint
+        entry: /usr/bin/env bash -c 'tflint --config=.tflint.hcl --recursive || true'
+
+  # - repo: https://github.com/bridgecrewio/checkov.git
+  #   rev: '3.2.384'
+  #   hooks:
+  #     - id: checkov
+  #       verbose: true
+  #       args:
+  #         - --quiet
+  #         - --compact
+  #         - --framework=terraform
+  #         - --config-file=checkov-config.yaml
+  #         - --skip-path=.terraform/.*
+  #         - --skip-path=.external_modules/.*
+
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.44.0
+    hooks:
+    - id: markdownlint
+      args:
+      - --fix
+      verbose: true
+      entry: bash -c 'markdownlint "$@" || true' --
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+        args: ['--ignore-words=.codespell-ignore']
+        exclude: '\.git\/.*'
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        args: [
+          '--severity=warning',  # Minimum severity of issues to display
+          '--shell=bash',       # Specify shell dialect
+          '--color=always'      # Colored output
+        ]
+
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.11.0-1
+    hooks:
+      - id: shfmt
+        args: ["-i", "2", "-ci", "-w"]  # 2 space

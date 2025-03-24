@@ -1,0 +1,10 @@
+project_id   = "integral-dev-001"
+region       = "us-central1"
+zone         = "us-central1-a"
+cluster_name = "logging-cluster"
+network_name = "logging-network"
+subnet_name  = "logging-subnet"
+subnet_cidr  = "10.0.0.0/24"
+node_count   = 2
+machine_type = "e2-standard-4"
+# gcs_bucket_name = null                     # Will be auto-generated as "loki-logs-${project_id}"
